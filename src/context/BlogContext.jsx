@@ -11,7 +11,7 @@ const BlogContextProvider = ({ children }) => {
   const { userInfo } = useContext(AuthContext);
   const [blogs, setBlogs] = useState([]);
   const [currentBlog, setCurrentBlog] = useState(null);
-  const [page, setPage] = useState(null);
+  const [page, setPage] = useState(1);
   const [paginationData, setPaginationData] = useState({
     count: 0,
     next: null,
@@ -38,7 +38,7 @@ const BlogContextProvider = ({ children }) => {
         count: res.data.count,
         next: res.data.next,
         previous: res.data.previous,
-        totalPages: (res.data.count % 20) + 1,
+        totalPages: Math.ceil(res.data.count / 10),
       });
     } catch (error) {
       console.log(error);
