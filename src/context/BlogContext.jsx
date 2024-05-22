@@ -1,37 +1,60 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { toastNotify } from "../helper/Toastify";
-import { AuthContext } from "./AuthContext";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import axios from 'axios';
+import { toastNotify } from '../helper/Toastify';
+import { AuthContext } from './AuthContext';
 
 export const BlogContext = createContext();
-const baseUrl = "https://cwbarry.pythonanywhere.com/";
+const baseUrl = 'https://cwbarry.pythonanywhere.com/';
 //const baseUrl = "https://20001.fullstack.clarusway.com/";
 
 const BlogContextProvider = ({ children }) => {
   const { userInfo } = useContext(AuthContext);
   const [blogs, setBlogs] = useState([]);
   const [currentBlog, setCurrentBlog] = useState(null);
+  const [page, setPage] = useState(null);
+  const [paginationData, setPaginationData] = useState({
+    count: 0,
+    next: null,
+    previous: null,
+    totalPages: 0,
+  });
 
-  const getBlogs = async () => {
+  useEffect(() => {
+    if (page) {
+      getBlogs(page);
+    }
+  }, [page]);
+
+  const getBlogs = async (page) => {
+    let url = `${baseUrl}blog/`;
+    if (page) {
+      url = `${baseUrl}blog/?page=${page}`;
+    }
     try {
-      const res = await axios.get(`${baseUrl}blog/`);
+      const res = await axios.get(url);
       console.log(res.data);
       setBlogs(res.data.results);
+      setPaginationData({
+        count: res.data.count,
+        next: res.data.next,
+        previous: res.data.previous,
+        totalPages: (res.data.count % 20) + 1,
+      });
     } catch (error) {
       console.log(error);
-      toastNotify(error.message, "error");
+      toastNotify(error.message, 'error');
     }
   };
 
   const addBlog = async (data, navigate) => {
     try {
       const formdata = new FormData();
-      formdata.append("title", data.title);
-      formdata.append("content", data.content);
-      if (data.image) formdata.append("image", data.image, data.image.name);
+      formdata.append('title', data.title);
+      formdata.append('content', data.content);
+      if (data.image) formdata.append('image', data.image, data.image.name);
 
       const res = await axios({
-        method: "post",
+        method: 'post',
         url: `${baseUrl}blog/`,
         data: formdata,
         headers: {
@@ -39,23 +62,23 @@ const BlogContextProvider = ({ children }) => {
         },
       });
       console.log(res.data);
-      toastNotify("Blog Added Successfully", "success");
-      navigate("/");
+      toastNotify('Blog Added Successfully', 'success');
+      navigate('/');
     } catch (error) {
       console.log(error);
-      toastNotify(error.message, "error");
+      toastNotify(error.message, 'error');
     }
   };
 
   const updateBlog = async (id, data, navigate) => {
     try {
       const formdata = new FormData();
-      formdata.append("title", data.title);
-      formdata.append("content", data.content);
-      if (data.image) formdata.append("image", data.image, data.image.name);
+      formdata.append('title', data.title);
+      formdata.append('content', data.content);
+      if (data.image) formdata.append('image', data.image, data.image.name);
 
       const res = await axios({
-        method: "put",
+        method: 'put',
         url: `${baseUrl}blog/${id}/`,
         data: formdata,
         headers: {
@@ -63,11 +86,11 @@ const BlogContextProvider = ({ children }) => {
         },
       });
       console.log(res.data);
-      toastNotify("Blog Updated Successfully", "success");
-      navigate("/");
+      toastNotify('Blog Updated Successfully', 'success');
+      navigate('/');
     } catch (error) {
       console.log(error);
-      toastNotify(error.message, "error");
+      toastNotify(error.message, 'error');
     }
   };
 
@@ -82,14 +105,14 @@ const BlogContextProvider = ({ children }) => {
       setCurrentBlog(res.data);
     } catch (error) {
       console.log(error);
-      toastNotify(error.message, "error");
+      toastNotify(error.message, 'error');
     }
   };
 
   const addComment = async (id, data) => {
     try {
       const res = await axios({
-        method: "post",
+        method: 'post',
         url: `${baseUrl}blog/comment/`,
         data: { post: id, content: data },
         headers: {
@@ -97,18 +120,18 @@ const BlogContextProvider = ({ children }) => {
         },
       });
       console.log(res.data);
-      toastNotify("Comment Added Successfully", "success");
+      toastNotify('Comment Added Successfully', 'success');
       getSingleBlog(id);
     } catch (error) {
       console.log(error);
-      toastNotify(error.message, "error");
+      toastNotify(error.message, 'error');
     }
   };
 
   const addLike = async (slug, id) => {
     try {
       const res = await axios({
-        method: "post",
+        method: 'post',
         url: `${baseUrl}blog/like/${slug}/`,
         headers: {
           Authorization: `Token ${userInfo.key}`,
@@ -118,7 +141,7 @@ const BlogContextProvider = ({ children }) => {
       getSingleBlog(id);
     } catch (error) {
       console.log(error);
-      toastNotify(error.message, "error");
+      toastNotify(error.message, 'error');
     }
   };
 
@@ -130,12 +153,12 @@ const BlogContextProvider = ({ children }) => {
         },
       });
       console.log(res.data);
-      toastNotify("Post deleted successfully", "success");
+      toastNotify('Post deleted successfully', 'success');
       setCurrentBlog(null);
-      navigate("/");
+      navigate('/');
     } catch (error) {
       console.log(error);
-      toastNotify(error.message, "error");
+      toastNotify(error.message, 'error');
     }
   };
 
@@ -151,6 +174,9 @@ const BlogContextProvider = ({ children }) => {
         deleteBlog,
         updateBlog,
         addLike,
+        page,
+        setPage,
+        paginationData,
       }}
     >
       {children}

@@ -1,7 +1,8 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect } from 'react';
 
-import { BlogCard, Layout } from "../components/";
-import { BlogContext } from "../context/BlogContext";
+import { BlogCard, Layout } from '../components/';
+import { BlogContext } from '../context/BlogContext';
+import PaginationComponent from '../components/PaginationComponent';
 
 const Dashboard = () => {
   const { getBlogs, blogs } = useContext(BlogContext);
@@ -16,13 +17,14 @@ const Dashboard = () => {
           <div
             key={item.id}
             style={{
-              width: "20rem",
+              width: '20rem',
             }}
           >
             <BlogCard data={item} />
           </div>
         ))}
       </div>
+      <PaginationComponent />
     </Layout>
   );
 };
