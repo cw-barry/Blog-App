@@ -35,7 +35,9 @@ const BlogCard = ({ data }) => {
         width="100%"
       />
       <CardBody>
-        <CardTitle tag="h5">{title}</CardTitle>
+        <CardTitle tag="h5">
+          {title.length > 25 ? `${title.slice(0, 25)}...` : title}
+        </CardTitle>
         <div className="d-flex justify-content-between">
           <CardSubtitle className="mb-2 text-muted" tag="h6">
             Author: {author}
@@ -44,7 +46,9 @@ const BlogCard = ({ data }) => {
             {new Date(published_date).toLocaleString()}
           </CardSubtitle>
         </div>
-        <CardText>{content}</CardText>
+        <CardText>
+          {content.length > 32 ? `${content.slice(0, 32)}...` : content}
+        </CardText>
         <div className="d-flex justify-content-between align-items-center">
           <Link to={`/post/details/${id}`}>
             <Button>See More</Button>
