@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Button,
   Card,
@@ -7,9 +7,9 @@ import {
   CardSubtitle,
   CardText,
   CardTitle,
-} from "reactstrap";
-import { BiLike, BiCommentDots, BiBullseye } from "react-icons/bi";
-import { Link } from "react-router-dom";
+} from 'reactstrap';
+import { BiLike, BiCommentDots, BiBullseye } from 'react-icons/bi';
+import { Link } from 'react-router-dom';
 
 const BlogCard = ({ data }) => {
   const {
@@ -25,7 +25,15 @@ const BlogCard = ({ data }) => {
   } = data;
   return (
     <Card>
-      <CardImg alt="Card image cap" src={image} top width="100%" />
+      <CardImg
+        className="object-fit-cover w-100"
+        // style={{ height: '200px' }}
+        height="200px"
+        alt="Card image cap"
+        src={image}
+        top
+        width="100%"
+      />
       <CardBody>
         <CardTitle tag="h5">{title}</CardTitle>
         <div className="d-flex justify-content-between">
